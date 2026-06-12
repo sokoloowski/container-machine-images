@@ -1,0 +1,18 @@
+ARG BASE_IMAGE=alpine:3.24
+
+FROM ${BASE_IMAGE}
+
+ENV container container
+
+RUN apk update \
+    && apk add --no-cache openrc sudo \
+    && rm -rf /var/cache/apk/*
+
+RUN rc-update add devfs sysinit \
+    && rc-update add procfs sysinit \
+    && rc-update add sysfs sysinit \
+    && rc-update add networking boot \
+    && rc-update add local boot
+
+VOLUME [ "/sys/fs/cgroup" ]
+CMD ["/sbin/init"]
